@@ -3,8 +3,13 @@
     --light-bg-primary: #fcfcfc;
 }
 
+body {
+    overflow: hidden;
+}
+
 .navbar {
     background-color: var(--dark-bg-primary);
+    border-radius: 10px;
 }
 
 .navbar img {
@@ -18,7 +23,7 @@
 }
 
 .navbar button {
-    padding: 5px 10px;
+    padding: 5px;
     background-color: transparent;
     border: none;
     color: white;
@@ -26,8 +31,10 @@
     font-size: 14px;
 }
 
+
 .navbar button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    color: #f3d4ff7a;
+    transform: scale(-10px);
 }
 
 ::-webkit-scrollbar {
