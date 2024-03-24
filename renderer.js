@@ -6,7 +6,7 @@ function openFile(event) {
     const fileName = file.name; // Získání názvu souboru
     const reader = new FileReader();
     reader.onload = function(e) {
-        const fileContent = editor.target.result;
+        const fileContent = e.target.result;
         const editor = ace.edit("editor");
         editor.setValue(fileContent);
         // Poslání názvu souboru do hlavního procesu pomocí IPC
