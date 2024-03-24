@@ -7,16 +7,17 @@
     <link rel="stylesheet" href="./output.css">
     <link rel="stylesheet" href="./assets/style.css">
     <style>
-
+    .dragOn {-webkit-app-region: drag;}
+    .dragOff {-webkit-app-region: none;}
     </style>
 </head>
 <body class="bg-gray-900 text-white font-montserrat">
-<div class="navbar flex items-center h-12 px-4">
+<div class="navbar flex items-center h-12 px-4 dragOn">
     <img src="./assets/logo.png" alt="Logo" class="mr-4">
     <div class="buttons">
-      <!-- <input type="file" id="file-input" class="hidden" onchange="openFile(event)">
-        <label for="file-input">Open File</label> -->
-
+      <input type="file" id="file-input" class="hidden" onchange="openFile(event)">
+        <label for="file-input">Open File</label>
+        
             <button onclick="minimizeWindow()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
@@ -35,19 +36,24 @@
 <div id="editor" class="w-full h-screen"></div>
     <script type="text/javascript" src="./functions/ajax/ace/1.2.8/ext-language_tools.js"></script>
     <script src="./functions/editor.js"></script>
-    <script src="./functions/renderer.js"></script>
+    <script src="./functions/openFile.js"></script>
     <script>
-        function closeWindow() {
-            // Vložte kód pro zavření okna
-        }
-
-        function minimizeWindow() {
-            // Vložte kód pro minimalizaci okna
+     function minimizeWindow() {
+            window.electronAPI.sendToMain('control-window', 'minimize');
         }
 
         function maximizeWindow() {
-            // Vložte kód pro maximalizaci okna
+            window.electronAPI.sendToMain('control-window', 'maximize');
         }
+
+        function closeWindow() {
+            window.electronAPI.sendToMain('control-window', 'close');
+        }
+
+        document.addEventListener('file-opened', function(event) {
+            const fileName = event.detail;
+            console.log('Název otevřeného souboru:', fileName);
+        });
     </script>
 </body>
 </html>
