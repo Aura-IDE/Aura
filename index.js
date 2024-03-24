@@ -1,45 +1,52 @@
-﻿const { app, BrowserWindow, ipcMain } = require('electron');
+﻿const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const url = require('url');
+const { Client } = require('discord-rpc');
 
-let mainWindow;
+const clientId = '1221435094921777222'; // Nahraďte YOUR_CLIENT_ID skutečným ID vaší aplikace v Discord Developer Portal
+
+const rpc = new Client({ transport: 'ipc' });
+
+rpc.login({ clientId }).catch(console.error);
+
+function updateRPC() {
+  rpc.setActivity({
+    details: 'Details',
+    state: 'State',
+    startTimestamp: new Date().getTime(),
+    largeImageKey: 'aura',
+    largeImageText: 'Large image text',
+    smallImageKey: 'aura',
+    smallImageText: 'Small image text',
+  });
+}
+
+rpc.on('ready', () => {
+  console.log('Discord RPC connected!');
+  updateRPC();
+});
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
+    icon: path.join(__dirname, 'assets', 'logo.png'),
     webPreferences: {
       nodeIntegration: true
     }
   });
 
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    })
-  );
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+  mainWindow.loadFile('index.html');
+  updateRPC();
 }
 
-// Přijetí zprávy IPC z renderovacího procesu
-ipcMain.on('control-window', (event, control) => {
-  if (control === 'minimize') {
-    mainWindow.minimize();
-  } else if (control === 'maximize') {
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow.maximize();
-    }
-  } else if (control === 'close') {
-    mainWindow.close();
-  }
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 });
 
-app.on('ready', createWindow);
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit();
+});
