@@ -1,0 +1,47 @@
+:root {
+    --dark-bg-primary: #141414;
+    --light-bg-primary: #fcfcfc;
+}
+
+.navbar {
+    background-color: var(--dark-bg-primary);
+}
+
+.navbar img {
+    width: 20px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.navbar .buttons {
+    margin-left: auto;
+}
+
+.navbar button {
+    padding: 5px 10px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.navbar button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #787878; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #787878; 
+}
