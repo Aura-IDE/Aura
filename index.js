@@ -1,4 +1,4 @@
-﻿const { app, BrowserWindow } = require('electron');
+﻿const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const { Client } = require('discord-rpc');
 
@@ -29,13 +29,14 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: path.join(__dirname, 'assets', 'logo.png'),
+    icon: path.join(__dirname, 'src', 'assets', 'logo.png'),
     webPreferences: {
       nodeIntegration: true
     }
-  });
 
-  mainWindow.loadFile('index.html');
+  });
+  mainWindow.webContents.openDevTools()
+  mainWindow.loadFile('./src/index.html');
   updateRPC();
 }
 
@@ -43,10 +44,23 @@ app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+      if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
+});
+
+// Zpracování otevření dialogového okna pro výběr souboru
+ipcMain.on('open-file-dialog', (event) => {
+  dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile']
+  }).then((result) => {
+      if (!result.canceled) {
+          event.sender.send('selected-file', result.filePaths[0]);
+      }
+  }).catch((err) => {
+      console.error(err);
+  });
 });

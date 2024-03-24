@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Aura IDE</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+    <link rel="shortcut icon" href="./assets/logo.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+
+</head>
+<style>
+    .navbar {
+        background-color: #141414;
+    }
+
+    .navbar img {
+        width: 20px;
+        height: auto;
+        margin-right: 10px; /* Větší mezera mezi logem a tlačítky */
+    }
+
+    .navbar .buttons {
+        margin-left: auto; /* Zarovnání tlačítek doprava */
+    }
+
+    .navbar button {
+        padding: 5px 10px;
+        background-color: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .navbar button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+</style>
+</head>
+
+<body class="bg-gray-900 text-white font-montserrat">
+<div class="navbar flex justify-end items-center h-12 px-4">
+    <img src="./assets/logo.png" alt="Logo">
+    <div class="buttons">
+        <input type="file" id="file-input" class="hidden" onchange="openFile(event)">
+        <label for="file-input">Open File</label>
+        <!-- Přidejte další tlačítka podle potřeby -->
+    </div>
+</div>
+    <div id="editor" class="w-full h-screen"></div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js"></script>
+    <script src="./functions/editor.js"></script>
+    <script src="./functions/openFile.js"></script>
+</body>
+
+</html>
