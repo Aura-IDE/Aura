@@ -1,60 +1,88 @@
-﻿const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+﻿const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { Client } = require('discord-rpc');
-
-let openedFileName;
+let mainWindow;
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     frame: false,
-    icon: path.join(__dirname, 'src', 'assets', 'logo.png'),
+    icon: './src/assets/logo.png',
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js')
     }
-
   });
-  mainWindow.webContents.openDevTools()
+
+  ipcMain.on('minimize', event => {
+		const webContents = event.sender
+		const win = BrowserWindow.fromWebContents(webContents)
+		win.minimize();
+	})
+
+	ipcMain.on('maximize', event => {
+		const webContents = event.sender
+		const win = BrowserWindow.fromWebContents(webContents)
+		win.maximize();
+	})
+
+	ipcMain.on('close', event => {
+		const webContents = event.sender
+		const win = BrowserWindow.fromWebContents(webContents)
+		win.close();
+	})
+
   mainWindow.loadFile('./src/index.html');
-  updateRPC();
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on('activate', function () {
-      if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
+ipcMain.on('control-window', (event, control) => {
+  if (control === 'minimize') {
+    mainWindow.minimize();
+  } else if (control === 'maximize') {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  } else if (control === 'close') {
+    mainWindow.close();
+  }
 });
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+app.on('ready', createWindow);
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-// Zpracování otevření dialogového okna pro výběr souboru
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow();
+  }
+});
+
 ipcMain.on('open-file-dialog', (event) => {
-  dialog.showOpenDialog(mainWindow, {
-      properties: ['openFile']
-  }).then((result) => {
-      if (!result.canceled) {
-          event.sender.send('selected-file', result.filePaths[0]);
-      }
-  }).catch((err) => {
-      console.error(err);
-  });
+dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile']
+}).then((result) => {
+    if (!result.canceled) {
+        event.sender.send('selected-file', result.filePaths[0]);
+    }
+}).catch((err) => {
+    console.error(err);
+});
 
-  ipcMain.on('file-opened', (event, fileName) => {
-    // Uložení názvu otevřeného souboru do globální proměnné
-    openedFileName = fileName;
-    console.log('Název otevřeného souboru:', openedFileName);
-  });
-  
+ipcMain.on('file-opened', (event, fileName) => {
+  openedFileName = fileName;
+  console.log('Název otevřeného souboru:', openedFileName);
+});
 
-  const clientId = '1221435094921777222'; // Nahraďte YOUR_CLIENT_ID skutečným ID vaší aplikace v Discord Developer Portal
-
+const clientId = '1221435094921777222';
 const rpc = new Client({ transport: 'ipc' });
-
 rpc.login({ clientId }).catch(console.error);
 
 function updateRPC() {
@@ -72,5 +100,5 @@ function updateRPC() {
 rpc.on('ready', () => {
   console.log('Discord RPC connected!');
   updateRPC();
-});
+  });
 });
