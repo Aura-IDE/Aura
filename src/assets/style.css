@@ -7,13 +7,16 @@ body {
     overflow: hidden;
 }
 
+.dragOn {-webkit-app-region: drag;}
+.dragOff {-webkit-app-region: none;}
+
 .navbar {
     background-color: var(--dark-bg-primary);
     border-radius: 10px;
 }
 
 .navbar img {
-    width: 20px;
+    width: 16px;
     height: auto;
     margin-right: 10px;
 }
