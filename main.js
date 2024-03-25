@@ -94,7 +94,7 @@ ipcMain.on('open-file-dialog', (event) => {
     });
   });
 
-    let fileName = "Being Idle"; // Výchozí hodnota pro details
+    let fileName = "💤・Being Idle"; // Výchozí hodnota pro details
 
     ipcMain.on('file-opened', (event, data) => {
         fileName = data.fileName;
@@ -106,8 +106,8 @@ ipcMain.on('open-file-dialog', (event) => {
     }
   
     function updateRPC(fileName) {
-        let detailsText = fileName === "Being Idle" ? fileName : 'Editing: ' + fileName;
-        let fileExtension = fileName === "Being Idle" ? '' : getFileExtension(fileName);
+        let detailsText = fileName === "💤・Being Idle" ? fileName : '📄・Editing: ' + fileName;
+        let fileExtension = fileName === "💤・Being Idle" ? '' : getFileExtension(fileName);
         let largeImageText = fileExtension ? fileExtension.toUpperCase() : 'None';
         let largeImageKey = fileExtension ? fileExtension : 'unknown';
 
@@ -118,7 +118,7 @@ ipcMain.on('open-file-dialog', (event) => {
 
         rpc.setActivity({
             details: detailsText, 
-            state: 'Workspace: ?',
+            state: '📍・Workspace: Aura',
             startTimestamp: new Date().getTime(),
             largeImageKey: largeImageKey,
             largeImageText: largeImageText,
