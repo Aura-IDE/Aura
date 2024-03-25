@@ -14,7 +14,7 @@ npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
 
 ## 😇 Credits:
 
-Libraries we use for us plinulý chod, thank you all <3
+Libraries we use for Aura, thank you all <3
 
 - [Electron.js](https://github.com/electron/electron)
 - [ACE 1.2.8](https://github.com/ajaxorg/ace)
