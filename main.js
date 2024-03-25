@@ -1,6 +1,7 @@
 ﻿const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { Client } = require('discord-rpc');
+const fetch = require('node-fetch');
 
 let mainWindow;
 let openedFileName;
@@ -23,6 +24,7 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
+    mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
@@ -56,25 +58,77 @@ ipcMain.on('control-window', (event, control) => {
   }
 });
 
-ipcMain.on('file-opened', (event, fileName) => {
-    openedFileName = fileName;
-    console.log('Name of opend file:', openedFileName);
-    updateRPC();
+
+ipcMain.on('showSaveDialog', async (event) => {
+    try {
+        const { filePath } = await dialog.showSaveDialog({
+            defaultPath: 'Untitled.txt',
+            filters: [{ name: 'Text Files', extensions: ['txt'] }]
+        });
+        return filePath; // Vrátí cestu k uloženému souboru
+    } catch (error) {
+        console.error('Error showing save dialog:', error);
+        return null; // Vrací null v případě chyby
+    }
 });
 
-function updateRPC() {
-    rpc.setActivity({
-        details: openedFileName,
-        state: 'Open Source IDE',
-        startTimestamp: new Date().getTime(),
-        largeImageKey: 'aura',
-        largeImageText: 'JavaScript', //name of Language whats editing
-        smallImageKey: 'aura',
-        smallImageText: 'Aura IDE 0.2',
+ipcMain.on('saveFile', async (event, filePath, fileContent) => {
+    try {
+        await fs.promises.writeFile(filePath, fileContent); // Uloží obsah do souboru
+        return true; // Vrátí true, pokud se soubor úspěšně uloží
+    } catch (error) {
+        console.error('Error saving file:', error);
+        return false; // Vrací false v případě chyby
+    }
+});
+
+ipcMain.on('open-file-dialog', (event) => {
+    dialog.showOpenDialog(mainWindow, {
+        properties: ['openFile']
+    }).then((result) => {
+        if (!result.canceled) {
+            event.sender.send('selected-file', result.filePaths[0]);
+        }
+    }).catch((err) => {
+        console.error(err);
     });
-}
+  });
+
+    let fileName = "Being Idle"; // Výchozí hodnota pro details
+
+    ipcMain.on('file-opened', (event, data) => {
+        fileName = data.fileName;
+        updateRPC(fileName);
+    });
+  
+    function getFileExtension(filename) {
+        return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    }
+  
+    function updateRPC(fileName) {
+        let detailsText = fileName === "Being Idle" ? fileName : 'Editing: ' + fileName;
+        let fileExtension = fileName === "Being Idle" ? '' : getFileExtension(fileName);
+        let largeImageText = fileExtension ? fileExtension.toUpperCase() : 'None';
+        let largeImageKey = fileExtension ? fileExtension : 'unknown';
+
+        let buttons = [
+            { label: "Download", url: "https://auraide.net/download/latest" },
+            { label: "GitHub Repository", url: "https://github.com/Aura-IDE/Aura" }
+        ];
+
+        rpc.setActivity({
+            details: detailsText, 
+            state: 'Workspace: ?',
+            startTimestamp: new Date().getTime(),
+            largeImageKey: largeImageKey,
+            largeImageText: largeImageText,
+            smallImageKey: 'aura',
+            smallImageText: 'Aura IDE 0.7',
+            buttons: buttons
+        });
+    }
 
 rpc.on('ready', () => {
     console.log('Discord RPC connected!');
-    updateRPC();
+    updateRPC(fileName);
 });

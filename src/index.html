@@ -25,17 +25,11 @@
         </button>
     </div>
 </div>
-<div class="sidemenu">
-
-</div>
 <div id="editor" class="w-full h-screen"></div>
     <script type="text/javascript" src="./functions/ajax/ace/1.32.8/ext-language_tools.js"></script>
     <script src="./functions/editor.js"></script>
     <script src="./functions/openFile.js"></script>
     <script>
-        function openFile(event) {
-            window.electronAPI.sendToMain('open-file-dialog');
-        }
         function minimizeWindow() {
             window.electronAPI.sendToMain('control-window', 'minimize');
         }
@@ -45,6 +39,37 @@
         function closeWindow() {
             window.electronAPI.sendToMain('control-window', 'close');
         }
+        function openNewTab() {
+            window.electronAPI.sendToMain('open-new-tab');
+        }
+
+        async function saveFile() {
+            const editor = ace.edit("editor");
+            const fileContent = editor.getValue();
+
+            try {
+                const filePath = await window.electronAPI.sendToMain('showSaveDialog');
+                if (!filePath) {
+                    console.log('File saving cancelled by user');
+                    return;
+                }
+                await window.electronAPI.sendToMain('saveFile', filePath, fileContent);
+                console.log('File saved successfully:', filePath);
+            } catch (error) {
+                console.error('Error saving file:', error);
+            }
+        }
+
+    function openNewTab() {
+        window.open(window.location.href, '_blank');
+    }
+    document.addEventListener("keydown", function(event) {
+        if (event.key === 's' && event.ctrlKey) {
+            event.preventDefault();
+            saveFile();
+        }
+    });
     </script>
+    
 </body>
 </html>
