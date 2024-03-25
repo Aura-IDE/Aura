@@ -1,0 +1,24 @@
+{
+    "languages": {
+        "html": [
+            ".html",
+            ".htm"
+        ],
+        "css": [
+            ".css"
+        ],
+        "javascript": [
+            ".js",
+            ".ejs",
+            ".mjs",
+            ".cjs",
+            ".jsx",
+            ".json",
+            ".coffee",
+            ".vue"
+        ],
+        "rust": [
+            ".rs"
+        ]
+    }
+}
