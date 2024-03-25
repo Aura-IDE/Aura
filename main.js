@@ -58,6 +58,30 @@ ipcMain.on('control-window', (event, control) => {
   }
 });
 
+
+ipcMain.on('showSaveDialog', async (event) => {
+    try {
+        const { filePath } = await dialog.showSaveDialog({
+            defaultPath: 'Untitled.txt',
+            filters: [{ name: 'Text Files', extensions: ['txt'] }]
+        });
+        return filePath; // Vrátí cestu k uloženému souboru
+    } catch (error) {
+        console.error('Error showing save dialog:', error);
+        return null; // Vrací null v případě chyby
+    }
+});
+
+ipcMain.on('saveFile', async (event, filePath, fileContent) => {
+    try {
+        await fs.promises.writeFile(filePath, fileContent); // Uloží obsah do souboru
+        return true; // Vrátí true, pokud se soubor úspěšně uloží
+    } catch (error) {
+        console.error('Error saving file:', error);
+        return false; // Vrací false v případě chyby
+    }
+});
+
 ipcMain.on('open-file-dialog', (event) => {
     dialog.showOpenDialog(mainWindow, {
         properties: ['openFile']
@@ -85,9 +109,10 @@ ipcMain.on('open-file-dialog', (event) => {
         let detailsText = fileName === "Being Idle" ? fileName : 'Editing: ' + fileName;
         let fileExtension = fileName === "Being Idle" ? '' : getFileExtension(fileName);
         let largeImageText = fileExtension ? fileExtension.toUpperCase() : 'None';
+        let largeImageKey = fileExtension ? fileExtension : 'unknown';
 
         let buttons = [
-            { label: "Download", url: "https://auraide.net//download/latest" },
+            { label: "Download", url: "https://auraide.net/download/latest" },
             { label: "GitHub Repository", url: "https://github.com/Aura-IDE/Aura" }
         ];
 
@@ -95,10 +120,10 @@ ipcMain.on('open-file-dialog', (event) => {
             details: detailsText, 
             state: 'Workspace: ?',
             startTimestamp: new Date().getTime(),
-            largeImageKey: 'aura',
+            largeImageKey: largeImageKey,
             largeImageText: largeImageText,
-            smallImageKey: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Icon_Bird_512x512.png',
-            smallImageText: 'Aura IDE 0.2',
+            smallImageKey: 'aura',
+            smallImageText: 'Aura IDE 0.7',
             buttons: buttons
         });
     }

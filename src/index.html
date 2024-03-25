@@ -26,6 +26,9 @@
             <button onclick="closeWindow()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>                       
             </button>
+            <button onclick="openNewTab()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>                       
+            </button>
         </div>
 </div>
 <div id="editor" class="w-full h-screen"></div>
@@ -42,6 +45,42 @@
         function closeWindow() {
             window.electronAPI.sendToMain('control-window', 'close');
         }
+        function openNewTab() {
+            window.electronAPI.sendToMain('open-new-tab');
+        }
+
+        async function saveFile() {
+            const editor = ace.edit("editor");
+            const fileContent = editor.getValue(); // Získání obsahu editoru
+
+            try {
+                const filePath = await window.electronAPI.sendToMain('showSaveDialog'); // Volání showSaveDialog pomocí IPC
+                if (!filePath) {
+                    console.log('File saving cancelled by user');
+                    return;
+                }
+                
+                // Volání metody saveFile s cestou k souboru a obsahem souboru
+                await window.electronAPI.sendToMain('saveFile', filePath, fileContent);
+                console.log('File saved successfully:', filePath);
+            } catch (error) {
+                console.error('Error saving file:', error);
+            }
+        }
+
+
+    // Funkce pro otevření nového okna s editorem
+    function openNewTab() {
+        window.open(window.location.href, '_blank');
+    }
+
+    // Uložení souboru při stisknutí klávesové zkratky Ctrl + S
+    document.addEventListener("keydown", function(event) {
+        if (event.key === 's' && event.ctrlKey) {
+            event.preventDefault(); // Zamezí výchozímu chování pro klávesovou zkratku Ctrl + S (uložení stránky)
+            saveFile(); // Volá funkci pro uložení souboru
+        }
+    });
     </script>
+    
 </body>
-</html>
