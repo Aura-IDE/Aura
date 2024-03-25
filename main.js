@@ -1,6 +1,7 @@
 ﻿const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { Client } = require('discord-rpc');
+const fetch = require('node-fetch');
 
 let mainWindow;
 let openedFileName;
@@ -23,6 +24,7 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
+    mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
@@ -56,25 +58,52 @@ ipcMain.on('control-window', (event, control) => {
   }
 });
 
-ipcMain.on('file-opened', (event, fileName) => {
-    openedFileName = fileName;
-    console.log('Name of opend file:', openedFileName);
-    updateRPC();
-});
-
-function updateRPC() {
-    rpc.setActivity({
-        details: openedFileName,
-        state: 'Open Source IDE',
-        startTimestamp: new Date().getTime(),
-        largeImageKey: 'aura',
-        largeImageText: 'JavaScript', //name of Language whats editing
-        smallImageKey: 'aura',
-        smallImageText: 'Aura IDE 0.2',
+ipcMain.on('open-file-dialog', (event) => {
+    dialog.showOpenDialog(mainWindow, {
+        properties: ['openFile']
+    }).then((result) => {
+        if (!result.canceled) {
+            event.sender.send('selected-file', result.filePaths[0]);
+        }
+    }).catch((err) => {
+        console.error(err);
     });
-}
+  });
+
+    let fileName = "Being Idle"; // Výchozí hodnota pro details
+
+    ipcMain.on('file-opened', (event, data) => {
+        fileName = data.fileName;
+        updateRPC(fileName);
+    });
+  
+    function getFileExtension(filename) {
+        return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    }
+  
+    function updateRPC(fileName) {
+        let detailsText = fileName === "Being Idle" ? fileName : 'Editing: ' + fileName;
+        let fileExtension = fileName === "Being Idle" ? '' : getFileExtension(fileName);
+        let largeImageText = fileExtension ? fileExtension.toUpperCase() : 'None';
+
+        let buttons = [
+            { label: "Download", url: "https://auraide.net//download/latest" },
+            { label: "GitHub Repository", url: "https://github.com/Aura-IDE/Aura" }
+        ];
+
+        rpc.setActivity({
+            details: detailsText, 
+            state: 'Workspace: ?',
+            startTimestamp: new Date().getTime(),
+            largeImageKey: 'aura',
+            largeImageText: largeImageText,
+            smallImageKey: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Icon_Bird_512x512.png',
+            smallImageText: 'Aura IDE 0.2',
+            buttons: buttons
+        });
+    }
 
 rpc.on('ready', () => {
     console.log('Discord RPC connected!');
-    updateRPC();
+    updateRPC(fileName);
 });
