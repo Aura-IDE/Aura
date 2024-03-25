@@ -57,15 +57,10 @@ ipcMain.on('control-window', (event, control) => {
   }
 });
 
-ipcMain.on('file-opened', (event, fileName, fileContent) => {
+ipcMain.on('file-opened', (event, fileName) => {
     openedFileName = fileName;
-    console.log('Name of opened file:', openedFileName);
-    mainWindow.webContents.send('update-editor', fileContent);
+    console.log('Name of opend file:', openedFileName);
     updateRPC();
-});
-
-ipcMain.on('update-editor', (event, fileContent) => {
-    mainWindow.webContents.send('update-editor', fileContent);
 });
 
 function updateRPC() {
