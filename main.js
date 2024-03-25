@@ -9,8 +9,8 @@ const rpc = new Client({ transport: 'ipc' });
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1920,
+        height: 1080,
         frame: false,
         icon: path.join(__dirname, 'src', 'assets', 'logo.png'),
         webPreferences: {
@@ -20,7 +20,6 @@ function createWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
-
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
