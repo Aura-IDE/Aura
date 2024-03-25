@@ -1,5 +1,8 @@
 {
     "languages": {
+        "unknown": [
+            
+        ],
         "html": [
             ".html",
             ".htm"
@@ -19,6 +22,50 @@
         ],
         "rust": [
             ".rs"
+        ],
+        "react": [
+            ".tsx"
+        ],
+        "ruby": [
+            ".r"
+        ],
+        "yaml": [
+            ".yml"
+        ],
+        "java": [
+            ".java"
+        ],
+        "markdown": [
+            ".md"
+        ],
+        "lua": [
+            ".lua"
+        ],
+        "txt": [
+            ".txt"
+        ],
+        "xml": [
+            ".xml"
+        ],
+        "csharp": [
+            ".cs"
+        ],
+        "kotlin": [
+            ".kt",
+            ".kts",
+            ".ktm"
+        ],
+        "typescript": [
+            ".ts"
+        ],
+        "go": [
+            ".go"
+        ],
+        "python": [
+            ".py"
+        ],
+        "php": [
+            ".php"
         ]
     }
 }
