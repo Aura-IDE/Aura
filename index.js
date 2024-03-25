@@ -44,46 +44,39 @@ app.on('activate', () => {
 });
 
 ipcMain.on('control-window', (event, control) => {
-    if (control === 'minimize') {
-        mainWindow.minimize();
-    } else if (control === 'maximize') {
-        if (mainWindow.isMaximized()) {
-            mainWindow.unmaximize();
-        } else {
-            mainWindow.maximize();
-        }
-    } else if (control === 'close') {
-        mainWindow.close();
+  if (control === 'minimize') {
+    mainWindow.minimize();
+  } else if (control === 'maximize') {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
     }
+  } else if (control === 'close') {
+    mainWindow.close();
+  }
 });
 
-ipcMain.on('open-file-dialog', (event) => {
-    dialog.showOpenDialog(mainWindow, {
-        properties: ['openFile']
-    }).then((result) => {
-        if (!result.canceled) {
-            event.sender.send('selected-file', result.filePaths[0]);
-        }
-    }).catch((err) => {
-        console.error(err);
-    });
-});
-
-ipcMain.on('file-opened', (event, fileName) => {
+ipcMain.on('file-opened', (event, fileName, fileContent) => {
     openedFileName = fileName;
-    console.log('Název otevřeného souboru:', openedFileName);
+    console.log('Name of opened file:', openedFileName);
+    mainWindow.webContents.send('update-editor', fileContent);
     updateRPC();
+});
+
+ipcMain.on('update-editor', (event, fileContent) => {
+    mainWindow.webContents.send('update-editor', fileContent);
 });
 
 function updateRPC() {
     rpc.setActivity({
         details: openedFileName,
-        state: 'State',
+        state: 'Open Source IDE',
         startTimestamp: new Date().getTime(),
-        largeImageKey: path.join(__dirname, 'src', 'assets', 'logo.png'),
-        largeImageText: 'Large image text',
+        largeImageKey: 'aura',
+        largeImageText: 'JavaScript', //name of Language whats editing
         smallImageKey: 'aura',
-        smallImageText: 'Small image text',
+        smallImageText: 'Aura IDE 0.2',
     });
 }
 

@@ -3,13 +3,11 @@ function openFile(event) {
     const file = fileInput.files[0];
     const fileName = file.name;
     const reader = new FileReader();
+    
     reader.onload = function(e) {
-        const fileContent = reader.result;
-        const editor = ace.edit("editor");
-        editor.setValue(fileContent);
-        const fileOpenedEvent = new CustomEvent('file-opened', { detail: fileName });
-        document.dispatchEvent(fileOpenedEvent);
+        const fileContent = e.target.result;
+        window.electronAPI.sendToMain('file-opened', fileName, fileContent);
     }
+    
     reader.readAsText(file);
-    console.log('Název otevřeného souboru:', fileName);
 }
