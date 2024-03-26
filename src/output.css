@@ -630,6 +630,10 @@ video {
   display: none;
 }
 
+.h-1 {
+  height: 0.25rem;
+}
+
 .h-12 {
   height: 3rem;
 }
@@ -640,10 +644,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-1 {
-  height: 0.25rem;
 }
 
 .w-4 {
@@ -736,14 +736,6 @@ video {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
-}
-
-.\[-_\:\.a-zA-Z0-9\C0-\FFFF\] {
-  -_: .a-zA-Z0-9À-￿;
-}
-
-.\[_\:a-zA-Z\C0-\FFFF\] {
-  _: a-zA-ZÀ-￿;
 }
 
 .\[-_\:\.a-zA-Z0-9\\u00c0-\\uffff\] {
