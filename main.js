@@ -65,36 +65,26 @@ ipcMain.on('showSaveDialog', async (event) => {
             defaultPath: 'Untitled.txt',
             filters: [{ name: 'Text Files', extensions: ['txt'] }]
         });
-        return filePath; // Vrátí cestu k uloženému souboru
+        return filePath;
     } catch (error) {
         console.error('Error showing save dialog:', error);
-        return null; // Vrací null v případě chyby
+        return null;
     }
 });
 
 ipcMain.on('saveFile', async (event, filePath, fileContent) => {
     try {
-        await fs.promises.writeFile(filePath, fileContent); // Uloží obsah do souboru
-        return true; // Vrátí true, pokud se soubor úspěšně uloží
+        await fs.promises.writeFile(filePath, fileContent);
+        return true;
     } catch (error) {
         console.error('Error saving file:', error);
-        return false; // Vrací false v případě chyby
+        return false;
     }
 });
 
-ipcMain.on('open-file-dialog', (event) => {
-    dialog.showOpenDialog(mainWindow, {
-        properties: ['openFile']
-    }).then((result) => {
-        if (!result.canceled) {
-            event.sender.send('selected-file', result.filePaths[0]);
-        }
-    }).catch((err) => {
-        console.error(err);
-    });
-  });
 
-    let fileName = "💤・Being Idle"; // Výchozí hodnota pro details
+
+    let fileName = "💤・Being Idle";
 
     ipcMain.on('file-opened', (event, data) => {
         fileName = data.fileName;
@@ -126,7 +116,7 @@ ipcMain.on('open-file-dialog', (event) => {
             largeImageKey: largeImageKey,
             largeImageText: largeImageText,
             smallImageKey: 'aura',
-            smallImageText: 'Aura IDE 0.7',
+            smallImageText: 'Aura IDE 0.9',
             buttons: buttons
         });
     }

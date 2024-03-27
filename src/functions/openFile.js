@@ -9,8 +9,8 @@ function openFile(event) {
         const fileContent = e.target.result;
         const editor = ace.edit("editor");
         editor.setValue(fileContent);
-        window.electronAPI.sendToMain('file-opened', { fileName }); // Poslat název souboru do hlavního procesu
-        console.log('Nahrán soubor:', fileName); // Vypsat název souboru do konzole
+        window.electronAPI.sendToMain('file-opened', { fileName });
+        console.log('Nahrán soubor:', fileName);
     }
     reader.readAsText(file);
 }
