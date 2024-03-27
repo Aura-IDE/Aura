@@ -14,7 +14,8 @@
     "discord-rich-presence": "^0.0.8",
     "discord-rpc": "^4.0.1",
     "electron": "^29.1.5",
-    "highlight.js": "^11.9.0"
+    "highlight.js": "^11.9.0",
+    "v8-compile-cache": "^2.4.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",

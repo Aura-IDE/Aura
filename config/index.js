@@ -5,7 +5,7 @@ function readAurScript(filePath) {
         const content = fs.readFileSync(filePath, 'utf8');
         return JSON.parse(content);
     } catch (err) {
-        console.error('Nepodařilo se načíst soubor:', err);
+        console.error('Failed to load file:', err);
         return null;
     }
 }

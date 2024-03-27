@@ -2,6 +2,7 @@
 const path = require('path');
 const { Client } = require('discord-rpc');
 const fetch = require('node-fetch');
+require('v8-compile-cache');
 
 let mainWindow;
 let openedFileName;
@@ -82,8 +83,6 @@ ipcMain.on('saveFile', async (event, filePath, fileContent) => {
     }
 });
 
-
-
     let fileName = "💤・Being Idle";
 
     ipcMain.on('file-opened', (event, data) => {
@@ -124,4 +123,15 @@ ipcMain.on('saveFile', async (event, filePath, fileContent) => {
 rpc.on('ready', () => {
     console.log('Discord RPC connected!');
     updateRPC(fileName);
+});
+
+// Dev Analitics
+const appStartTime = new Date();
+app.on('ready', () => {
+    const windowCreationTime = new Date();
+    const appEndTime = new Date();
+    const loadTime = appEndTime - appStartTime;
+    const windowCreationDuration = windowCreationTime - appStartTime;
+    console.log(`The application was loaded in ${loadTime} ms.`);
+    console.log(`The application window was created for ${windowCreationDuration} ms.`);
 });
