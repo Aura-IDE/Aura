@@ -12,5 +12,5 @@ function openFile(event) {
         ipcRenderer.send('file-opened', fileName);
     }
     reader.readAsText(file);
-    console.log('Název otevřeného souboru:', fileName);
+    console.log('Name of opend file:', fileName);
 }
