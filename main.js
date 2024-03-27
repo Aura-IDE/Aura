@@ -110,6 +110,9 @@ ipcMain.on('open-file-dialog', (event) => {
         let fileExtension = fileName === "💤・Being Idle" ? '' : getFileExtension(fileName);
         let largeImageText = fileExtension ? fileExtension.toUpperCase() : 'None';
         let largeImageKey = fileExtension ? fileExtension : 'unknown';
+        if(fileName === "💤・Being Idle") {
+            largeImageKey = "idle"
+        }
 
         let buttons = [
             { label: "Download", url: "https://auraide.net/download/latest" },

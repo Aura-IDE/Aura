@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Ace.js Editor with File Management</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ace-builds/src/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/ace-builds/src/theme-monokai.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/ace-builds/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-jhLpfbRHlLjELjfuwoXQFV8Bz0RCuyGJg7g8hAmh1XWzpOr4LprmuDqHXqwP4w3dgyxk+1MxIQVYK6RdfLFWOw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+<nav class="bg-gray-800 p-4">
+  <div class="flex items-center">
+    <div class="mr-4">
+      <button class="btn" onclick="saveCode()">Save</button>
+      <button class="btn ml-4" onclick="loadCode()">Load</button>
+    </div>
+    <div class="flex-grow"></div>
+    <div>
+      <button class="btn" onclick="setTheme('ace/theme/monokai')">Dark Theme</button>
+      <button class="btn ml-4" onclick="setTheme('ace/theme/chrome')">Light Theme</button>
+    </div>
+  </div>
+</nav>
+
+<div class="flex h-screen">
+  <div class="w-1/5 bg-gray-800 p-4 h-full">
+    <div class="mb-4">
+      <input id="newFileName" class="bg-gray-700 text-white p-2 rounded" type="text" placeholder="New File Name">
+      <button class="btn mt-2" onclick="createNewFile()">Create New File</button>
+    </div>
+    <ul id="fileList" class="overflow-auto max-h-full">
+      <!-- List of files will be appended here -->
+    </ul>
+  </div>
+
+  <div id="editor" class="flex-grow"></div>
+</div>
+
+<script>
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/javascript");
+  var files = {};
+
+  function saveCode() {
+    var code = editor.getValue();
+    var fileName = getActiveFileName();
+    var blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, fileName);
+    saveFileToLocal(fileName, code);
+  }
+
+  function loadCode() {
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.js,.json,.ejs';
+
+    fileInput.onchange = function(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var content = event.target.result;
+        editor.setValue(content);
+        addFileToList(file.name, content);
+      };
+      reader.readAsText(file);
+    };
+
+    fileInput.click();
+  }
+
+  function setTheme(theme) {
+    editor.setTheme(theme);
+  }
+
+  function createNewFile() {
+    var newFileName = document.getElementById('newFileName').value;
+    if (!newFileName) return;
+
+    addFileToList(newFileName, '');
+    window.location.hash = "#file_" + encodeURIComponent(newFileName);
+    saveFileToLocal(newFileName, '');
+  }
+
+  function addFileToList(fileName, content) {
+    files[fileName] = content;
+    var li = document.createElement('li');
+    li.textContent = fileName;
+    li.className = "cursor-pointer py-2";
+    li.onclick = function() {
+      editor.setValue(files[fileName]);
+      window.location.hash = "#file_" + encodeURIComponent(fileName);
+    };
+    document.getElementById('fileList').appendChild(li);
+  }
+
+  function getActiveFileName() {
+    for (var fileName in files) {
+      if (files[fileName] === editor.getValue()) {
+        return fileName;
+      }
+    }
+    return 'code.txt';
+  }
+
+  function saveFileToLocal(fileName, content) {
+    localStorage.setItem(fileName, content);
+  }
+
+  function loadAllFiles() {
+    for (var i = 0; i < localStorage.length; i++) {
+      var fileName = localStorage.key(i);
+      var content = localStorage.getItem(fileName);
+      addFileToList(fileName, content);
+    }
+  }
+
+  function parseHash() {
+    var hash = window.location.hash;
+    if (hash.startsWith("#file_")) {
+      var fileName = decodeURIComponent(hash.substring(6));
+      if (files.hasOwnProperty(fileName)) {
+        editor.setValue(files[fileName]);
+      }
+    }
+  }
+
+  window.addEventListener("hashchange", parseHash);
+  window.addEventListener("DOMContentLoaded", function() {
+    parseHash();
+    loadAllFiles();
+  });
+</script>
+
+</body>
+</html>
