@@ -4,3 +4,7 @@
 [] Sidemenu
 [] Faster electron
 [] Add navbar
+[] Add breaking points
+[] Errors alert
+[] Settings
+[] Extenstion system
